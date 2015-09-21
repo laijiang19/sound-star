@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <title>a title</title>
+  <title>Sound River</title>
   <meta name="description" content="something">
   <meta name="author" content="Lai 'Lain' Jiang">
   <link rel="stylesheet" type="text/css" href="style.css">
@@ -11,11 +11,22 @@
   <![endif]-->
 </head>
 <body>
-    <div id="thesketch"></div>
-    <script type="text/javascript" src="lib/jquery/dist/jquery.min.js"></script>
-    <script type="text/javascript" src="lib/p5.js/lib/p5.min.js"></script>
-    <script type="text/javascript" src="lib/p5.js/lib/addons/p5.sound.min.js"></script>
+  <div id="thesketch"></div>
+  <script type="text/javascript" src="lib/jquery/dist/jquery.min.js"></script>
+  <script type="text/javascript" src="lib/p5.js/lib/p5.min.js"></script>
+  <script type="text/javascript" src="lib/p5.js/lib/addons/p5.sound.min.js"></script>
+  <script src="lib/clmtrackr/clmtrackr.js"></script>
+  <script src="lib/clmtrackr/models/model_pca_20_svm.js"></script>
 
-    <script type="text/javascript" src="client/main.js"></script>
+  <div id="container">
+    <video id="video" width="368" height="288" autoplay loop>
+    </video>
+    <canvas id="canvas" width="368" height="288"></canvas>
+  </div>
+
+  <script type="text/javascript" src="js/utils.js"></script>
+  <script type="text/javascript" src="js/main.js"></script>
+  <script type="text/javascript" src="js/facetrakr.js"></script>
+
 </body>
 </html>
