@@ -15,6 +15,7 @@
     "tests"
   ],
   "dependencies": {
+    "clmtrackr": "*",
     "jquery": "~2.1.4",
     "p5.js": "p5js#~0.4.12"
   }

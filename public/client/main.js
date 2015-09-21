@@ -1,11 +1,7 @@
-var particles = [];
 var mouse;
-
-var colorA;
-var colorB;
-var colorC;
-var colorD;
 var count = 0;
+
+var playing = false;
 
 function preload() {
   // serve sound file
@@ -22,11 +18,8 @@ function setup() {
   fill(0);
   rectMode(CENTER);
   background(255);
-  colorA = color(48,222,179);
 
-  // colorB = color(221,166,232);
-  // colorC = color(145,162,  0);
-  // colorD = color(196,195,195);
+  colorA = color(48,222,179);
 
   amp = new p5.Amplitude();
   
@@ -34,7 +27,7 @@ function setup() {
   // fill(100);
   // noStroke();
   // text("Click to play sound", width/2, height/2);
-  frameRate(5);
+  frameRate(20);
 }
 function draw() {
   background(255);
@@ -48,16 +41,10 @@ function draw() {
   // ellipse(width/2, height/2, size, size);
   
   for (var i = 0; i < size; i++){
-    console.log(i);
-    var noiseRaw = noise(x1, x2);
-    // var noiseRot = map(noiseRaw, 0.2, 0.8, -50, 50 );
+    var noiseRaw = noise(x1, y1);
     var noiseRot = map(noiseRaw, 0.2, 0.8, 0, PI*2 );
-    var x2 = x1 + sin(noiseRot) * random(50, 100);
-    var y2 = x2 + sin(noiseRot) * random(50, 100);
-
-    // var x2 = x1 + random(-50, 50);
-    // var y2 = y1 + random(-50, 50);
-    // ellipse(x2, y2, 20, 20);
+    var x2 = x1 + sin(noiseRot) * random(size * 20, size * 40);
+    var y2 = y1 + cos(noiseRot) * random(size * 20, size * 40);
 
     stroke(0);
     line(x1, y1, x2, y2);
@@ -70,9 +57,6 @@ function draw() {
   //   particles[i].draw();
   //   var noiseRaw = noise(particles[i].nowPos.x * 0.006, particles[i].nowPos.y * 0.006);
   //   var noiseRot = map(noiseRaw, 0.2, 0.8, 0, PI*2 );
-  //   console.log(cos(noiseRot)*3);
-  //   console.log(sin(noiseRot)*3);
-  //   console.log(noiseRot);
   //   particles[i].acc.set(cos(noiseRot)*3, sin(noiseRot)*3);
   // }
 
@@ -103,18 +87,15 @@ function draw() {
 
 }
 
-function mouseMoved() {
-  // count++;
-  // if (count === 25){
-  //   background(255);
-  //   particles = []; 
-  //   count = 0;
-  // }
-}
-
 function mousePressed() {
-  // trigger sound
-  sound.play();
+  if (!playing) {
+    sound.play();
+    playing = true;
+  }
+  else {
+    sound.pause();
+    playing = false;
+  }
 }
 
 // function Particle(posN, accN, colorIn){
