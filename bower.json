@@ -1,0 +1,21 @@
+{
+  "name": "sound-river",
+  "version": "0.0.0",
+  "authors": [
+    "Lai 'Lain' Jiang <lain.lai.jiang@gmail.com>"
+  ],
+  "description": "audio visualization using p5.js",
+  "main": "index.html",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "~2.1.4",
+    "p5.js": "p5js#~0.4.12"
+  }
+}
