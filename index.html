@@ -3,7 +3,7 @@
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <title>Sound River</title>
-  <meta name="description" content="something">
+  <meta name="description" content="Audio Visualize Your Face">
   <meta name="author" content="Lai 'Lain' Jiang">
   <link rel="stylesheet" type="text/css" href="style.css">
   <!--[if lt IE 9]>
@@ -16,16 +16,21 @@
   <script src="lib/underscore/underscore-min.js"></script>
   <script src="lib/p5.js/lib/p5.min.js"></script>
   <script src="lib/p5.js/lib/addons/p5.sound.min.js"></script>
+  <script src="lib/p5.js/lib/addons/p5.dom.js"></script>
   <script src="lib/clmtrackr/clmtrackr.js"></script>
   <script src="lib/clmtrackr/models/model_pca_20_svm.js"></script>
 
   <div id="container">
-    <video id="video" width="1000" height="800" autoplay loop muted>
+    <!-- <video id="video" width="1000" height="800" autoplay loop muted>
+    </video> -->
+    <video id="video" width="800" height="600" autoplay loop muted>
+      <source src="assets/franck.ogv" type="video/ovg">
     </video>
 <!--     <canvas id="canvas" width="368" height="288"></canvas> -->
   </div>
 
   <script type="text/javascript" src="js/utils.js"></script>
+  <script type="text/javascript" src="js/flock.js"></script>
   <script type="text/javascript" src="js/main.js"></script>
   <script type="text/javascript" src="js/facetrakr.js"></script>
 
