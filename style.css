@@ -2,7 +2,20 @@
   background-color: #90308d;
 }*/
 
-#container{
+#container {
   display: none;
   margin: auto;
+}
+
+.control {
+  display: inline-block;
+  background-color: #ddd;
+  padding: 10px;
+  padding-right: 40px;
+  padding-left: 40px;
+}
+
+.control h4 {
+  padding: 0px;
+  margin: 0px;
 }

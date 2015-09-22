@@ -6,9 +6,9 @@ var mouse, amp, fft, filter, positions, moveref;
 var count = 0;
 var start = leftEye;
 var playing = false;
-var beatThreshold = 0.35;
+var beatThreshold = 0.27;
 var frameSince = 0;
-var frameCutOff = 3;
+var frameCutOff = 2;
 var bg = 0;
 var bright = 255;
 var dark = 100;
@@ -18,8 +18,8 @@ var flockColor = 0;
 
 function preload() {
   // serve sound file
-  soundFormats('mp3');
-  sound = loadSound('assets/PointBreeze.mp3');
+  soundFormats('m4a');
+  sound = loadSound('assets/circling.m4a');
 }
 
 function setup() {
@@ -36,10 +36,10 @@ function setup() {
   fft = new p5.FFT();
   filter = new p5.LowPass();
 
-  sound.disconnect();
-  sound.connect(filter);
+  // sound.disconnect();
+  // sound.connect(filter);
 
-  frameRate(30);
+  frameRate(20);
 
   flock = new Flock();
   for (var i = 0; i < 100; i++) {
@@ -91,15 +91,15 @@ function detectBeat(level, length) {
   if (level > beatThreshold){
     onBeat(length);
     frameSince = 0;
-    flockColor = dark;
+    drawCircles();
     if (frameSince < frameCutOff) {
-      drawCircles();
       drawFace(true);
+      flockColor = dark;
       return;
     }
   }
   else {
-    flockColor = 0;
+    flockColor = bg;
   }
   drawFace();
 }
