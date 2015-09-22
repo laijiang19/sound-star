@@ -14,7 +14,9 @@ var bright = 255;
 var dark = 100;
 var superDark = 40;
 var flockColor = 0;
+var triangles = [];
 
+var counter = 0;
 
 function preload() {
   // serve sound file
@@ -49,6 +51,7 @@ function setup() {
 }
 
 function draw() {
+  counter ++;
   
   background(0);
   var level = amp.getLevel();
@@ -63,6 +66,25 @@ function draw() {
   detectBeat(level, 19);
   drawStrike(size);
 
+  // debugger;
+  if (counter < 10 || !triangles[0]){
+    var triTop = new Triangle(20, windowWidth/2, 20);
+    var triBottom = new Triangle(-20, windowWidth/2, windowHeight);
+    triangles.push(triTop);
+    triangles.push(triBottom);
+  }
+  if (triangles[0]) {
+    for (var i = 0; i < triangles.length; i++){
+      triangles[i].update();
+    }  
+    if (triangles[0].lifeCount === 0){
+      for (var j = 0; j < triangles.length; j++){
+        triangles[j].update(bg);
+      }
+      triangles = [];
+      counter = 0;
+    }
+  }  
 }
 
 function mousePressed() {
@@ -187,7 +209,6 @@ function drawFace(outline) {
 }
 
 function changeColor(amp) {
-  console.log(amp);
   var lo = amp * 3;
   var r = random(lo, 255);
   var g = random(lo, 255);
@@ -195,6 +216,34 @@ function changeColor(amp) {
   dark = color(r, g, b);
 }
 
+function Triangle(height, x, y) {
+  this.height = height;
+  this.headPos = createVector(x, y);
+  this.lifeCount = 80;
+  this.findTail();
+  this.draw();
+}
+
+Triangle.prototype.update = function(color) {
+  this.draw(color);
+  this.headPos.add(0, this.height);
+  this.lifeCount--;
+  this.tail1.add(-this.height, 0);
+  this.tail2.add(this.height, 0);
+};
+
+Triangle.prototype.findTail = function() {
+  this.tail1 = createVector(this.headPos.x - this.height, this.headPos.y - this.height);
+  this.tail2 = createVector(this.headPos.x + this.height, this.headPos.y - this.height);
+};
+
+Triangle.prototype.draw = function(color) {
+  color = color || dark;
+  stroke(color);
+  line(this.headPos.x, this.headPos.y, this.tail1.x, this.tail1.y);
+  stroke(color);
+  line(this.headPos.x, this.headPos.y, this.tail2.x, this.tail2.y);
+};
 
 // function drawPerp() {
 
