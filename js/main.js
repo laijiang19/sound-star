@@ -98,7 +98,7 @@ function setup() {
   frameRate(20);
 
   flock = new Flock();
-  for (var i = 0; i < 100; i++) {
+  for (var i = 0; i < 177; i++) {
     var b = new Boid(width/2,height/2);
     flock.addBoid(b);
   }
@@ -169,9 +169,9 @@ function detectBeat(level, length) {
     onBeat(length);
     frameSince = 0;
     drawCircles(eyeShape);
+    flockColor = dark;
     if (frameSince < frameCutOff) {
       drawFace(true);
-      flockColor = dark;
       return;
     }
   }
@@ -242,7 +242,7 @@ function drawFace(outline) {
     var length = positions.length;
     if (moveref !== undefined){
       var distance = dist(moveref[0], moveref[1], positions[leftEye][0], positions[leftEye][1]);
-      if (distance > 5) {
+      if (distance > 7) {
         changeColor(distance);
       }
       else {
@@ -288,7 +288,7 @@ function star(x, y, radius1, radius2) {
 }
 
 function triangleLoop() {
-  if ((triCount < 25 || !triangles[0]) && triCall){
+  if ((triCount < 15 || !triangles[0]) && triCall){
     triCount++;
     var ran = random(15, 30);
     var triTop = new Triangle(ran, windowWidth/2, 20);
