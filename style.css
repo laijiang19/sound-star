@@ -5,17 +5,33 @@
 #container {
   display: none;
   margin: auto;
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
 }
 
 .control {
   display: inline-block;
-  background-color: #ddd;
-  padding: 10px;
-  padding-right: 40px;
-  padding-left: 40px;
+  width: 80px;
+  background-color: #ff3399;
+  border: 0px;
+  padding: 5px;
+  padding-right: 20px;
+  padding-left: 20px;
 }
 
-.control h4 {
+canvas {
   padding: 0px;
   margin: 0px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
 }
+
+body {
+  background-color: #000000;
+}
+/*.control h4 {
+  padding: 0px;
+  margin: 0px;
+}*/

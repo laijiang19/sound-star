@@ -24,7 +24,7 @@ function videoError(err) {
 
 function positionLoop() {
   requestAnimationFrame(positionLoop);
-  return ctracker.getCurrentPosition(); 
+  return ctracker.getCurrentPosition();
 }
 
 // function drawLoop() {

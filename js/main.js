@@ -2,7 +2,8 @@
 var leftEye = 27;
 var rightEye = 32;
 
-var mouse, amp, fft, filter, positions, moveref;
+var canvas;
+var mouse, amp, fft, filter, positions, moveref, level, size;
 var count = 0;
 var start = leftEye;
 var playing = false;
@@ -14,9 +15,20 @@ var bright = 255;
 var dark = 100;
 var superDark = 40;
 var flockColor = 0;
-var triangles = [];
+var offset = 300;
 
-var counter = 0;
+var eyeChange = false;
+var eyeShape;
+var eyeCount = 0;
+
+var triangles = [];
+var triCount = 0;
+var triCall = false;
+var rTris = [];
+var roTriCount = 0;
+var roTriCall = false;
+
+var play, effects, eyes, style, pause;
 
 function preload() {
   // serve sound file
@@ -26,8 +38,50 @@ function preload() {
 
 function setup() {
 
-  mouse = createVector(mouseX, mouseY);
-  createCanvas(windowWidth, windowHeight);
+  eyeShape = ellipse;
+
+  canvas = createCanvas(windowWidth, windowHeight);
+
+  play = createButton('play').addClass('control');
+  play.position(150, 100);
+  play.mousePressed(startEverything);
+
+  pause = createButton('pause').addClass('control');
+  pause.position(150, 100);
+  pause.mousePressed(startEverything);
+  pause.hide();
+
+  effects = createButton('effects').addClass('control');
+  effects.position(150, 140);
+  effects.mousePressed(function(){
+    if (random(0, 1) >= 0.5) {
+      triCall = true;
+    }
+    else {
+      roTriCall = true;    
+    }
+  });
+  effects.hide();
+
+  eyes = createButton('eyes').addClass('control');
+  eyes.position(150, 180);
+  eyes.mousePressed(function(){
+    eyeCount++;
+    if (eyeCount % 3 === 0) {
+      eyeShape = ellipse;
+    }
+    else if (eyeCount % 3 === 1) {
+      eyeShape = rect;
+    }
+    else if (eyeCount % 3 === 2) {
+      eyeShape = star;
+    }
+  });
+  eyes.hide();
+
+  // style = createButton('style').addClass('control');
+  // style.position(150, 220);
+  // style.hide();
 
   noStroke();
   fill(bright);
@@ -51,11 +105,10 @@ function setup() {
 }
 
 function draw() {
-  counter ++;
   
   background(0);
-  var level = amp.getLevel();
-  var size = map(level, 0, 1, 0, 20);
+  level = amp.getLevel();
+  size = map(level, 0, 1, 0, 20);
 
   // check if average is constantly smaller than beatThreshold 
     // if so, set beat threshold to average
@@ -63,40 +116,42 @@ function draw() {
   positions = positionLoop();
   var length = positions.length;
 
+  // for (var n = 0; n < length; n++) {
+  //   positions[n][0] += 50;
+  // }
+
   detectBeat(level, 19);
   drawStrike(size);
 
   // debugger;
-  if (counter < 10 || !triangles[0]){
-    var triTop = new Triangle(20, windowWidth/2, 20);
-    var triBottom = new Triangle(-20, windowWidth/2, windowHeight);
-    triangles.push(triTop);
-    triangles.push(triBottom);
-  }
-  if (triangles[0]) {
-    for (var i = 0; i < triangles.length; i++){
-      triangles[i].update();
-    }  
-    if (triangles[0].lifeCount === 0){
-      for (var j = 0; j < triangles.length; j++){
-        triangles[j].update(bg);
-      }
-      triangles = [];
-      counter = 0;
-    }
-  }  
+  // triangle group 
+  triangleLoop();
+  roTriLoop();
 }
 
-function mousePressed() {
+function startEverything() {
   if (!playing) {
     sound.play();
     playing = true;
+    play.hide();
+    pause.show();
+    // style.show();
+    effects.show();
+    eyes.show();
   }
   else {
     sound.pause();
     playing = false;
+    play.show();
+    pause.hide();
+    // style.hide();
+    effects.hide();
+    eyes.hide();
   }
 }
+
+// function mousePressed() {
+// }
 
 function randomIndex(limit, num) {
   num = num || 1;
@@ -113,7 +168,7 @@ function detectBeat(level, length) {
   if (level > beatThreshold){
     onBeat(length);
     frameSince = 0;
-    drawCircles();
+    drawCircles(eyeShape);
     if (frameSince < frameCutOff) {
       drawFace(true);
       flockColor = dark;
@@ -137,7 +192,7 @@ function drawStrike(size) {
   if (size !== 0) {
     for (var k = 0; k < list.length; k++){ 
       if (positions[list[k]] !== undefined){
-        x1 = positions[list[k]][0];
+        x1 = positions[list[k]][0] + offset;
         y1 = positions[list[k]][1];
       }
       else {
@@ -166,19 +221,19 @@ function drawStrike(size) {
   }
 }
 
-function drawCircles() {
+function drawCircles(shape) {
   if (positions[leftEye] !== undefined && positions[rightEye] !== undefined){
-    var xl = positions[leftEye][0];
+    var xl = positions[leftEye][0] + offset;
     var yl = positions[leftEye][1];
-    var xr = positions[rightEye][0];
+    var xr = positions[rightEye][0] + offset;
     var yr = positions[rightEye][1];
     var ra = random(80, 140);
 
     fill(0);
     stroke(bright);
 
-    ellipse(xl, yl, ra, ra);
-    ellipse(xr, yr, ra, ra);
+    shape(xl, yl, ra, ra);
+    shape(xr, yr, ra, ra);
   }
 }
 
@@ -199,10 +254,10 @@ function drawFace(outline) {
     for (var j = 0; j < length; j++){
       start = start || leftEye;
       stroke(bright);
-      ellipse(positions[j][0], positions[j][1], 1, 1);
+      ellipse(positions[j][0] + offset, positions[j][1], 1, 1);
       if (outline) {
         stroke(superDark);
-        line(positions[j][0], positions[j][1], positions[start][0], positions[start][1]);
+        line(positions[j][0] + offset, positions[j][1], positions[start][0] + offset, positions[start][1]);
       }
     }  
   }
@@ -216,56 +271,66 @@ function changeColor(amp) {
   dark = color(r, g, b);
 }
 
-function Triangle(height, x, y) {
-  this.height = height;
-  this.headPos = createVector(x, y);
-  this.lifeCount = 80;
-  this.findTail();
-  this.draw();
+function star(x, y, radius1, radius2) {
+  var angle = TWO_PI / 5;
+  var halfAngle = angle/2.0;
+  radius1 -= 50;
+  beginShape();
+  for (var a = 0; a < TWO_PI; a += angle) {
+    var sx = x + cos(a) * radius2;
+    var sy = y + sin(a) * radius2;
+    vertex(sx, sy);
+    sx = x + cos(a+halfAngle) * radius1;
+    sy = y + sin(a+halfAngle) * radius1;
+    vertex(sx, sy);
+  }
+  endShape(CLOSE);
 }
 
-Triangle.prototype.update = function(color) {
-  this.draw(color);
-  this.headPos.add(0, this.height);
-  this.lifeCount--;
-  this.tail1.add(-this.height, 0);
-  this.tail2.add(this.height, 0);
-};
+function triangleLoop() {
+  if ((triCount < 25 || !triangles[0]) && triCall){
+    triCount++;
+    var ran = random(15, 30);
+    var triTop = new Triangle(ran, windowWidth/2, 20);
+    var triBottom = new Triangle(-ran, windowWidth/2, windowHeight);
+    triangles.push(triTop);
+    triangles.push(triBottom);
+  }
+  if (triangles[0]) {
+    for (var i = 0; i < triangles.length; i++){
+      triangles[i].update();
+    }  
+    if (triangles[0].lifeCount === 0){
+      for (var j = 0; j < triangles.length; j++){
+        triangles[j].update(bg);
+      }
+      triangles = [];
+      triCount = 0;
+      triCall = false;
+    }
+  } 
+}
 
-Triangle.prototype.findTail = function() {
-  this.tail1 = createVector(this.headPos.x - this.height, this.headPos.y - this.height);
-  this.tail2 = createVector(this.headPos.x + this.height, this.headPos.y - this.height);
-};
-
-Triangle.prototype.draw = function(color) {
-  color = color || dark;
-  stroke(color);
-  line(this.headPos.x, this.headPos.y, this.tail1.x, this.tail1.y);
-  stroke(color);
-  line(this.headPos.x, this.headPos.y, this.tail2.x, this.tail2.y);
-};
-
-// function drawPerp() {
-
-//   if (positions){
-//     var seed = random(0, 1);
-//     for (var i = 0; i < 15; i++){
-//       if (seed <= 0.25) {
-//         stroke(dark);
-//         line(positions[i][0], positions[i][1], positions[i][0], windowHeight);
-//       }
-//       else if (seed <= 0.5) {
-//         stroke(dark);
-//         line(positions[i][0], positions[i][1], positions[i][0], 0);
-//       }
-//       else if (seed <= 0.75) {
-//         stroke(dark);
-//         line(positions[i][0], positions[i][1], windowWidth, positions[i][1]);
-//       }
-//       else {
-//         stroke(dark);
-//         line(positions[i][0], positions[i][1], 0, positions[i][1]);
-//       }
-//     }
-//   }
-// }
+function roTriLoop() {
+  if (roTriCall && (!rTris[0] || roTriCount < 30)) {
+    roTriCount ++;
+    var ran = random(5, 15);
+    var rTriTop = new RotatingTri(-ran, windowWidth/4, windowHeight/2);
+    var rTriBottom = new RotatingTri(ran, windowWidth/4, windowHeight/2);
+    rTris.push(rTriTop);
+    rTris.push(rTriBottom);
+  }
+  if (rTris[0]) {
+    for (var m = 0; m < rTris.length; m++) {
+      rTris[m].update();
+    }
+    if (rTris[0].lifeCount === 0) {
+      for (var n = 0; n < rTris.length; n++) {
+        rTris[n].update(bg);
+      }
+      rTris = [];
+      roTriCount = 0;
+      roTriCall = false;
+    }
+  }
+}
